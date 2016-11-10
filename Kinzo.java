@@ -19,12 +19,12 @@ import java.util.Random;
 public class Kinzo extends Thread
 {	public Random random;
     String Filename;
-    int rotar;
+    int opcion;
     private static DesktopApi youtube;
     public Kinzo(final String filename, int numero) throws Exception
     {
         Filename = filename;
-        rotar = numero;
+        opcion = numero;
     }
 
     public void run() {
@@ -52,22 +52,31 @@ public class Kinzo extends Thread
         imagen.getScaledInstance(10, 10, Image.SCALE_SMOOTH);
         ImageIcon icono = new ImageIcon(urlDeLaImagen);
         JLabel jLabel = null;
-
-        if(rotar == 0){
+        //Opcion sin cambios
+        if(opcion == 0){
              jLabel = new JLabel();
             jLabel.setIcon(icono);
         }
-        else{
+        //Opcion rotada
+        else if(opcion == 1){
             BufferedImage ima3 = rotate(ima2,Math.toRadians(random.nextInt(360)));
             icono = new ImageIcon(ima3);
             jLabel = new JLabel();
             jLabel.setIcon(icono);
-
-
-
+        }
+        //Opcion rotada y con filtro invertido
+        else{
+            BufferedImage ima3 = rotate(ima2,Math.toRadians(random.nextInt(360)));
+            BufferedImage ima4 = InvertImage(ima3);
+            icono = new ImageIcon(ima4);
+            jLabel = new JLabel();
+            jLabel.setIcon(icono);
         }
 
+
         editorFrame.getContentPane().add(jLabel, BorderLayout.CENTER);
+        //editorFrame.getContentPane().setBackground(Color.cyan);
+
 
         editorFrame.pack();
         editorFrame.setLocation(random.nextInt(5000), random.nextInt(700));
@@ -106,6 +115,22 @@ public class Kinzo extends Thread
     }
     //Fin funciones para rotar
 
+    //Invertir filtro
+
+        public BufferedImage InvertImage(BufferedImage image) {
+            byte[] invertArray = new byte[256];
+
+            for (int counter = 0; counter < 256; counter++)
+                invertArray[counter] = (byte) (255 - counter);
+
+            BufferedImageOp invertFilter = new LookupOp(new ByteLookupTable(0, invertArray), null);
+            return invertFilter.filter(image, null);
+
+        }
+
+    //Fin invertir filtro
+
+
     public static void main(String[] args) throws Exception
     {
         File archivo = null;
@@ -122,7 +147,6 @@ public class Kinzo extends Thread
             // Lectura del fichero
             String linea;
             while((linea=br.readLine())!=null){
-                System.out.println(linea);
                 if(linea.equals(null)){
 
                 }
@@ -151,23 +175,24 @@ public class Kinzo extends Thread
             }
         }
 
-
-
-
         while(true){
             Kinzo kinzo1 = new Kinzo("desire.png", 0);
             kinzo1.start();
             Thread.sleep(100);
             Kinzo kinzo2 = new Kinzo("Beatrice1.png", 0);
-
             kinzo2.start();
             Thread.sleep(100);
-
             Kinzo kinzo3 = new Kinzo ("desire.png",1);
             kinzo3.start();
             Thread.sleep(100);
             Kinzo kinzo4 = new Kinzo ("Beatrice1.png",1);
             kinzo4.start();
+            Thread.sleep(100);
+            Kinzo kinzo5 = new Kinzo ("desire.png",2);
+            kinzo5.start();
+            Thread.sleep(100);
+            Kinzo kinzo6 = new Kinzo ("Beatrice1.png",2);
+            kinzo6.start();
             Thread.sleep(100);
         }
     }
