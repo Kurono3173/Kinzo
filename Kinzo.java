@@ -58,7 +58,7 @@ public class Kinzo extends Thread
             jLabel.setIcon(icono);
         }
         else{
-            BufferedImage ima3 = rotate(ima2,Math.toRadians(180));
+            BufferedImage ima3 = rotate(ima2,Math.toRadians(random.nextInt(360)));
             icono = new ImageIcon(ima3);
             jLabel = new JLabel();
             jLabel.setIcon(icono);
@@ -108,8 +108,51 @@ public class Kinzo extends Thread
 
     public static void main(String[] args) throws Exception
     {
-        youtube = new DesktopApi();
-        youtube.browse(new URI("https://www.youtube.com/watch?v=QEOy4zEVFoU"));
+        File archivo = null;
+        FileReader fr = null;
+        BufferedReader br = null;
+
+        try {
+            // Apertura del fichero y creacion de BufferedReader para poder leer
+
+            archivo = new File ("Video.txt");
+            fr = new FileReader (archivo);
+            br = new BufferedReader(fr);
+
+            // Lectura del fichero
+            String linea;
+            while((linea=br.readLine())!=null){
+                System.out.println(linea);
+                if(linea.equals(null)){
+
+                }
+                else{
+
+                    youtube = new DesktopApi();
+                    youtube.browse(new URI(linea));
+                }
+            }
+
+
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            // En el finally cerramos el fichero, para asegurarnos
+            // que se cierra tanto si todo va bien como si salta
+            // una excepcion.
+            try{
+                if( null != fr ){
+                    fr.close();
+
+                }
+            }catch (Exception e2){
+                e2.printStackTrace();
+            }
+        }
+
+
+
 
         while(true){
             Kinzo kinzo1 = new Kinzo("desire.png", 0);
@@ -128,17 +171,5 @@ public class Kinzo extends Thread
             Thread.sleep(100);
         }
     }
-
-    public static void play(URI uri){
-        if(Desktop.isDesktopSupported()){
-            try{
-                Desktop.getDesktop().browse(uri);
-            }catch (IOException e){
-                e.printStackTrace();
-            }
-        }
-    }
-
-
 
 }
