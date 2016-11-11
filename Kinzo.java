@@ -130,19 +130,13 @@ public class Kinzo extends Thread
 
     //Fin invertir filtro
 
-
-    public static void main(String[] args) throws Exception
-    {
-        File archivo = null;
-        FileReader fr = null;
-        BufferedReader br = null;
+    public static void lectura(){
+        // Apertura del fichero y creacion de BufferedReader para poder leer
+        InputStream archivo = null;
 
         try {
-            // Apertura del fichero y creacion de BufferedReader para poder leer
-
-            archivo = new File ("Video.txt");
-            fr = new FileReader (archivo);
-            br = new BufferedReader(fr);
+            archivo = ClassLoader.getSystemResourceAsStream("Video.txt");
+            BufferedReader br =  new BufferedReader(new InputStreamReader(archivo));
 
             // Lectura del fichero
             String linea;
@@ -166,15 +160,21 @@ public class Kinzo extends Thread
             // que se cierra tanto si todo va bien como si salta
             // una excepcion.
             try{
-                if( null != fr ){
-                    fr.close();
+                if( null != archivo ){
+                    archivo.close();
 
                 }
             }catch (Exception e2){
                 e2.printStackTrace();
             }
         }
+    }
 
+
+    public static void main(String[] args) throws Exception
+    {
+
+        lectura();
         while(true){
             Kinzo kinzo1 = new Kinzo("desire.png", 0);
             kinzo1.start();
