@@ -47,9 +47,10 @@ public class DesktopApi {
         EnumOS os = getOs();
 
         if (os.isLinux()) {
+            if (runCommand("xdg-open", "%s", what)) return true;
             if (runCommand("kde-open", "%s", what)) return true;
             if (runCommand("gnome-open", "%s", what)) return true;
-            if (runCommand("xdg-open", "%s", what)) return true;
+
         }
 
         if (os.isMac()) {
@@ -186,7 +187,7 @@ public class DesktopApi {
 
     private static void logErr(String msg, Throwable t) {
         System.err.println(msg);
-        t.printStackTrace();
+        //t.printStackTrace();
     }
 
     private static void logErr(String msg) {

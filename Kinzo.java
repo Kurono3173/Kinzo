@@ -21,6 +21,7 @@ public class Kinzo extends Thread
     String Filename;
     int opcion;
     private static DesktopApi youtube;
+    
     public Kinzo(final String filename, int numero) throws Exception
     {
         Filename = filename;
@@ -33,24 +34,18 @@ public class Kinzo extends Thread
         JFrame editorFrame = new JFrame("OH DESIRE!!!");
         editorFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-
-        Image imagen = null;
-        URL urlDeLaImagen = null;
-        BufferedImage ima2 = null;
+        
+        BufferedImage imagen = null;
         try
         {
-            urlDeLaImagen = Kinzo.class.getClassLoader().getResource(Filename);
-            ImageIcon icono = new ImageIcon(urlDeLaImagen);
-            imagen = icono.getImage();
-            ima2 = ImageIO.read(getClass().getResourceAsStream(Filename));
+            imagen = ImageIO.read(getClass().getResourceAsStream(Filename));
         }
         catch (Exception e)
         {
             e.printStackTrace();
             System.exit(1);
         }
-        imagen.getScaledInstance(10, 10, Image.SCALE_SMOOTH);
-        ImageIcon icono = new ImageIcon(urlDeLaImagen);
+        ImageIcon icono = new ImageIcon(imagen);
         JLabel jLabel = null;
         //Opcion sin cambios
         if(opcion == 0){
@@ -59,14 +54,21 @@ public class Kinzo extends Thread
         }
         //Opcion rotada
         else if(opcion == 1){
-            BufferedImage ima3 = rotate(ima2,Math.toRadians(random.nextInt(360)));
+            BufferedImage ima3 = rotate(imagen,Math.toRadians(random.nextInt(360)));
+            icono = new ImageIcon(ima3);
+            jLabel = new JLabel();
+            jLabel.setIcon(icono);
+        }
+        //Opcion sepia
+        else if(opcion == 2){
+            BufferedImage ima3 = aplicarFiltroSepia(imagen);
             icono = new ImageIcon(ima3);
             jLabel = new JLabel();
             jLabel.setIcon(icono);
         }
         //Opcion rotada y con filtro invertido
         else{
-            BufferedImage ima3 = rotate(ima2,Math.toRadians(random.nextInt(360)));
+            BufferedImage ima3 = rotate(imagen,Math.toRadians(random.nextInt(360)));
             BufferedImage ima4 = InvertImage(ima3);
             icono = new ImageIcon(ima4);
             jLabel = new JLabel();
@@ -75,17 +77,12 @@ public class Kinzo extends Thread
 
 
         editorFrame.getContentPane().add(jLabel, BorderLayout.CENTER);
-        //editorFrame.getContentPane().setBackground(Color.cyan);
-
-
         editorFrame.pack();
         editorFrame.setLocation(random.nextInt(5000), random.nextInt(700));
-
-
         //editorFrame.setLocationRelativeTo(null);
         editorFrame.setVisible(true);
 
-        imagen.flush();
+
         try{
             Thread.sleep(500);
             editorFrame.dispose();
@@ -130,6 +127,34 @@ public class Kinzo extends Thread
 
     //Fin invertir filtro
 
+    //Filtro sepia
+    public BufferedImage aplicarFiltroSepia(BufferedImage ima2) {
+        BufferedImage bi = null;
+        if(ima2 != null ) {
+            bi = new BufferedImage(ima2.getWidth(), ima2.getHeight(),
+                    ima2.getType());
+            Color colorImagen = null; int red = 0, green = 0, blue = 0;
+            for(int i = 0; i < ima2.getWidth(); i++) {
+                for (int j = 1; j < (ima2.getHeight()-1); j++) {
+                    colorImagen = new Color(ima2.getRGB(i, j));
+                    try {
+                        red = (int)(colorImagen.getRed() * 0.393 +
+                                colorImagen.getGreen() * 0.769 + colorImagen.getBlue() * 0.189);
+                        green = (int)(colorImagen.getRed() * 0.349 +
+                                colorImagen.getGreen() * 0.686 + colorImagen.getBlue() * 0.168);
+                        blue = (int)(colorImagen.getRed() * 0.272 +
+                                colorImagen.getGreen() * 0.534 + colorImagen.getBlue() * 0.131);
+                        colorImagen = new Color((red>255)?255:red,
+                                (green>255)?255:green, (blue>255)?255:blue);
+                    } catch (Exception e) {}
+                    bi.setRGB(i, j, colorImagen.getRGB());
+                }
+            }
+        }
+        return bi;
+    }
+    //Fin filtro sepia
+
     public static void lectura(){
         // Apertura del fichero y creacion de BufferedReader para poder leer
         InputStream archivo = null;
@@ -142,16 +167,12 @@ public class Kinzo extends Thread
             String linea;
             while((linea=br.readLine())!=null){
                 if(linea.equals(null)){
-
                 }
                 else{
-
                     youtube = new DesktopApi();
                     youtube.browse(new URI(linea));
                 }
             }
-
-
         }
         catch(Exception e){
             e.printStackTrace();
@@ -162,14 +183,12 @@ public class Kinzo extends Thread
             try{
                 if( null != archivo ){
                     archivo.close();
-
                 }
             }catch (Exception e2){
                 e2.printStackTrace();
             }
         }
     }
-
 
     public static void main(String[] args) throws Exception
     {
@@ -193,6 +212,12 @@ public class Kinzo extends Thread
             Thread.sleep(100);
             Kinzo kinzo6 = new Kinzo ("Beatrice1.png",2);
             kinzo6.start();
+            Thread.sleep(100);
+            Kinzo kinzo7 = new Kinzo ("desire.png",3);
+            kinzo7.start();
+            Thread.sleep(100);
+            Kinzo kinzo8 = new Kinzo ("Beatrice1.png",3);
+            kinzo8.start();
             Thread.sleep(100);
         }
     }
