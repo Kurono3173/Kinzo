@@ -75,10 +75,12 @@ public class Kinzo extends Thread
             jLabel.setIcon(icono);
         }
 
+        //Dimensiones pantalla
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
         editorFrame.getContentPane().add(jLabel, BorderLayout.CENTER);
         editorFrame.pack();
-        editorFrame.setLocation(random.nextInt(5000), random.nextInt(700));
+        editorFrame.setLocation(random.nextInt(screenSize.width), random.nextInt(screenSize.height));
         //editorFrame.setLocationRelativeTo(null);
         editorFrame.setVisible(true);
 
